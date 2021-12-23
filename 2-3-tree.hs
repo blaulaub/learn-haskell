@@ -1,7 +1,8 @@
--- record notation, with independent lists of keys and children
-data Node = Node { keys     :: [Int]
-                 , children :: [Maybe Node]  -- for root: maybe none; for leaf: always none
-                 } deriving (Show)
 
--- the empty node
-emptyNode = Node [] [Nothing]
+-- B-Tree data structure
+-- (does not enforce B-Tree invariants per se)
+data BTree = BTLeaf [Int]
+           | BTNode [(BTree, Int)] BTree
+           deriving (Show)
+
+emptyBTree = BTLeaf []
