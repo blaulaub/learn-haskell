@@ -41,5 +41,27 @@ and3 False _ = False
 add2 :: (Num a) =>  a -> a -> a
 add2 = \x -> (\y -> x+y)
 
-odds3 :: (Num a, Enum a, Num b) => a -> [b]
-odds3 = \n -> map (\x -> 2*x+1) [1..n]
+odds2 :: (Num a, Enum a) => a -> [a]
+odds2 = \n -> map (\x -> 2*x+1) [1..n]
+
+-- this fails, types are inconsistent
+--odds3 :: (Num a, Enum a, Num b) => a -> [b]
+
+apply2 :: Num a => (a -> a) -> a -> a
+apply2 = \f -> \v -> f v
+
+-- this fails, minus is parsed as part of 5
+--apply (-5) 10
+-- this passes, minus is an operator
+--apply((-)5) 10
+
+halve2 :: [a] -> ([a], [a])
+halve2 [] = ([],[])
+halve2 (x:xs) = (x:bs, cs ++ [c])
+  where
+    c = last xs
+    (bs, cs) = halve2 (init xs)
+
+third2 :: [a] -> a ; third2 xs = head (tail (tail xs))
+third3 :: [a] -> a ; third3 xs = xs !! 2
+third4 :: [a] -> a ; third4 (_:_:x:_) = x
