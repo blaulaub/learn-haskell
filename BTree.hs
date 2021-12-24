@@ -1,9 +1,10 @@
 module BTree where
 
 --
-data BTree key = BTLeaf [key]
-               | BTNode [(BTree key, key)] (BTree key)
-               deriving (Eq, Show)
+data BTree key
+  = BTLeaf [key]
+  | BTNode [(BTree key, key)] (BTree key)
+  deriving (Eq, Show)
 
 --
 emptyBTree :: Ord key => BTree key
@@ -18,17 +19,31 @@ insertInOrderedList (x : xs) value
 insertInOrderedList (_ : _) _ = undefined
 
 --
-splitOverflown :: Ord key => BTree key -> (BTree key, key, BTree key)
-splitOverflown (BTLeaf xs) = (BTLeaf (take n xs), xs !! n, BTLeaf (drop (n+1) xs))
-  where n = length xs `div` 2
-splitOverflown (BTNode _ _) = undefined
+data BTSplitResult key
+  = BTUnsplit (BTree key)
+  | BTSplit (BTree key, key, BTree key)
+
+--
+splitIfOverflown :: Ord key => BTree key -> BTSplitResult key
+splitIfOverflown (BTLeaf xs)
+  | length xs > 2 = BTSplit (BTLeaf (take n xs), xs !! n, BTLeaf (drop (n + 1) xs))
+  | otherwise = BTUnsplit (BTLeaf xs)
+  where
+    n = length xs `div` 2
+splitIfOverflown (BTNode ps p) = BTUnsplit (BTNode ps p) -- incorrect stub
+--
+
+rootFromSplit :: Ord key => BTSplitResult key -> BTree key
+rootFromSplit (BTUnsplit tree) = tree
+rootFromSplit (BTSplit (lower, key, upper)) = BTNode [(lower, key)] upper
 
 --
 insertInRoot :: Ord key => BTree key -> key -> BTree key
-insertInRoot (BTLeaf xs) x = BTLeaf (insertInOrderedList xs x) -- incorrect stub
-insertInRoot (BTNode _ _) _ = undefined
+insertInRoot (BTLeaf xs) x = rootFromSplit (splitIfOverflown (BTLeaf (insertInOrderedList xs x))) -- incorrect stub
+insertInRoot (BTNode [] p) x = undefined
+insertInRoot (BTNode ps p) x = undefined
 
 --
 insert :: Ord key => BTree key -> key -> BTree key
 insert (BTLeaf xs) x = insertInRoot (BTLeaf xs) x
-insert (BTNode _ _) _ = undefined
+insert (BTNode ps p) x = insertInRoot (BTNode ps p) x
