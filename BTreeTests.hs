@@ -12,7 +12,12 @@ assertNotEqual preface expected actual =
  where msg = (if null preface then "" else preface ++ "\n") ++
              "not expected: " ++ show expected ++ "\n but got: " ++ show actual
 
+--
+treeOf :: Ord key => [key] -> BTree.BTree key
+treeOf [] = BTree.emptyBTree
+treeOf (x : xs) = BTree.insert (treeOf xs) x
 
+--
 main = runTestTT (TestList [
 
   TestLabel "constant for empty B-tree is well defined"
@@ -25,9 +30,9 @@ main = runTestTT (TestList [
     (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [13]) (BTree.insert BTree.emptyBTree 13))),
 
   TestLabel "insert two descending elements into empty tree gives ordered one-leaf tree"
-    (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [16, 27]) (BTree.insert (BTree.insert BTree.emptyBTree 27) 16))),
+    (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [16, 27]) (BTree.insert (treeOf [27]) 16))),
 
   TestLabel "insert two ascending elements into empty tree gives ordered one-leaf tree"
-    (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [1, 23]) (BTree.insert (BTree.insert BTree.emptyBTree 1) 23)))
+    (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [1, 23]) (BTree.insert (treeOf [1]) 23)))
 
   ])
