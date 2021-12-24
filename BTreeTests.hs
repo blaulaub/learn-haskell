@@ -33,6 +33,10 @@ main = runTestTT (TestList [
     (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [16, 27]) (BTree.insert (treeOf [27]) 16))),
 
   TestLabel "insert higher element into singleton tree gives ordered one-leaf tree"
-    (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [1, 23]) (BTree.insert (treeOf [1]) 23)))
+    (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [1, 23]) (BTree.insert (treeOf [1]) 23))),
+
+  -- TODO this test assumes that a leaf can take up to four elements; rather compare flat list from tree
+  TestLabel "building tree from a few elements gives ordered one-leaf tree"
+    (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [23, 34, 54, 76]) (treeOf [54, 23, 76, 34])))
 
   ])
