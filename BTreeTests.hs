@@ -29,10 +29,10 @@ main = runTestTT (TestList [
   TestLabel "insert one element into empty tree gives one-leaf one-element tree"
     (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [13]) (BTree.insert BTree.emptyBTree 13))),
 
-  TestLabel "insert two descending elements into empty tree gives ordered one-leaf tree"
+  TestLabel "insert lower element into singleton tree gives ordered one-leaf tree"
     (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [16, 27]) (BTree.insert (treeOf [27]) 16))),
 
-  TestLabel "insert two ascending elements into empty tree gives ordered one-leaf tree"
+  TestLabel "insert higher element into singleton tree gives ordered one-leaf tree"
     (TestCase (assertEqual "leaf consists of inserted key" (BTree.BTLeaf [1, 23]) (BTree.insert (treeOf [1]) 23)))
 
   ])
