@@ -1,9 +1,8 @@
-
--- B-Tree data structure
+module BTree where
 
 data BTree = BTLeaf [Int]
            | BTNode [(BTree, Int)] BTree
-           deriving (Show)
+           deriving (Eq, Show)
 
 emptyBTree = BTLeaf []
 
