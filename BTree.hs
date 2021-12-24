@@ -8,16 +8,6 @@ data BTree key = BTLeaf [key]
 --
 emptyBTree :: Ord key => BTree key
 emptyBTree = BTLeaf []
-
---
-findInOrderedList :: Ord key => [key] -> key -> Maybe key
-findInOrderedList [] _ = Nothing
-findInOrderedList (x : xs) value
-  | x < value = findInOrderedList xs value
-  | x == value = Just value
-  | x > value = Nothing
-findInOrderedList (_:_) _ = undefined
-
 --
 insertInOrderedList :: Ord key => [key] -> key -> [key]
 insertInOrderedList [] value = [value]
@@ -26,11 +16,6 @@ insertInOrderedList (x : xs) value
   | x == value = value : xs
   | x > value = value : x : xs
 insertInOrderedList (_ : _) _ = undefined
-
---
-findKey :: Ord key => BTree key -> key -> Maybe key
-findKey (BTLeaf xs) value = findInOrderedList xs value
-findKey (BTNode _ _) _ = undefined
 
 --
 splitOverflown :: Ord key => BTree key -> (BTree key, key, BTree key)
