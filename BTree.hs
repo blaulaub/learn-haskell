@@ -7,3 +7,6 @@ data BTree key value
 
 emptyBTree :: Ord key => BTree key value
 emptyBTree = BTLeaf []
+
+insert :: Ord key => BTree key value -> (key, value) -> BTree key value
+insert _ _ = undefined
