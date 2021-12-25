@@ -1,5 +1,8 @@
 module BTree where
 
+-- ==
+-- ==   GENERIC UTILITY CODE
+-- ==
 -- put key-value pairs into a list, keeping keys unique and ordered
 putIntoList :: Ord key => [(key, value)] -> key -> value -> [(key, value)]
 putIntoList [] key value = [(key, value)]
@@ -18,6 +21,9 @@ split capacity xs
   | otherwise = Split (take n xs) (xs !! n) (drop (n+1) xs)
   where n = length xs `div` 2
 
+-- ==
+-- ==   SPECIFIC BTREE CODE
+-- ==
 -- a tree is either a leaf or a node
 -- on both leaf and node is a list of keys
 -- on both leaf and node, each key is associated with a value
@@ -28,17 +34,30 @@ data BTree key value
   | BTNode [(key, (value, BTree key value))] (BTree key value)
   deriving (Eq, Show)
 
--- insert at the root, return the updated root
-put1 :: Ord key => BTree key value -> key -> value -> BTree key value
--- insert at the child of the parent, return the updated parent
-put2 :: Ord key => BTree key value -> BTree key value -> key -> value -> BTree key value
-
-put1 (BTLeaf root) key value = undefined
-put1 (BTNode rs rt) key value = undefined
-put2 (BTLeaf _) _ _ _ = undefined -- unreachable
-put2 (BTNode ps pt) (BTNode cs ct) key value = undefined
-put2 (BTNode ps pt) (BTLeaf leaf) key value = undefined
-
 --
+-- development steps:
+--   - insert, regardless of ordering and node size
+--   - lookup
+--   - preserve ordering
+--   - cap leaf size (split leaf when too big)
+--   - cap node size (split node when too big)
+
+insert :: Ord key => BTree key value -> key -> value -> BTree key value
+insert (BTLeaf leaf) key value = BTLeaf (putIntoList leaf key value)
+insert _ _ _ = undefined
+
+-- ==
+-- ==   BTREE UTILITY CODE
+-- ==
 emptyBTree :: Ord key => BTree key value
 emptyBTree = BTLeaf []
+
+toList :: Ord key => BTree key value -> [(key, value)]
+toList (BTLeaf []) = []
+toList (BTLeaf ((key, value) : remainder)) = (key, value) : toList (BTLeaf remainder)
+toList (BTNode [] finalSubtree) = toList finalSubtree
+toList (BTNode ((key, (value, firstSubtree)) : remainder) finalSubtree) = toList firstSubtree ++ [(key, value)] ++ toList (BTNode remainder finalSubtree)
+
+ofList :: Ord key => [(key, value)] -> BTree key value
+ofList [] = emptyBTree
+ofList ((key, value) : remainder) = insert (ofList remainder) key value
